@@ -15,57 +15,58 @@
             align-items: center;
             justify-content: center;
             background-color: #fff0f3;
-            font-family: 'Arial', sans-serif;
-            overflow: hidden; /* Keeps everything inside the frame */
-            position: fixed; /* Prevents "pull-to-refresh" on mobile */
+            font-family: sans-serif;
+            overflow: hidden;
+            position: fixed;
         }
 
         h1 {
             color: #ff4d6d;
             font-size: 1.8rem;
-            margin-bottom: 40px;
-            pointer-events: none;
+            margin-bottom: 50px;
+            text-align: center;
+            padding: 0 20px;
         }
 
-        .container {
-            position: relative;
-            width: 100%;
-            height: 100%;
+        /* This keeps the buttons together at the start */
+        .button-wrapper {
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            gap: 20px;
             justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 50px;
         }
 
         button {
-            padding: 15px 40px;
-            font-size: 1.2rem;
+            padding: 15px 35px;
+            font-size: 1.1rem;
             border: none;
             border-radius: 50px;
-            cursor: pointer;
             font-weight: bold;
-            touch-action: none; /* Disables default phone gestures */
+            cursor: pointer;
+            touch-action: none; /* Prevents zooming/scrolling on touch */
         }
 
         #yesBtn {
             background-color: #ff4d6d;
             color: white;
-            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.3);
-            z-index: 10;
+            z-index: 100;
         }
 
         #noBtn {
-            background-color: #6c757d;
+            background-color: #888;
             color: white;
-            position: absolute; /* Allows it to move anywhere in the frame */
-            transition: all 0.1s ease;
-            z-index: 5;
+            position: static; /* Starts inline, then turns absolute */
+            transition: 0.1s ease;
+            z-index: 99;
         }
 
         #message {
             display: none;
+            font-size: 2.2rem;
             color: #c9184a;
-            font-size: 2rem;
+            font-weight: bold;
             text-align: center;
             padding: 20px;
         }
@@ -75,9 +76,9 @@
 
     <div id="quiz">
         <h1>Celine, do you love me?</h1>
-        <div class="container">
+        <div class="button-wrapper">
             <button id="yesBtn" onclick="celebrate()">Yes</button>
-            <button id="noBtn" onmouseover="moveButton()" ontouchstart="moveButton()">No</button>
+            <button id="noBtn" onmouseover="moveButton()" ontouchstart="moveButton(event)">No</button>
         </div>
     </div>
 
@@ -86,21 +87,24 @@
     </div>
 
     <script>
-        function moveButton() {
+        function moveButton(event) {
+            // Stop the phone from trying to click the button
+            if(event) event.preventDefault();
+
             const btn = document.getElementById('noBtn');
             
-            // padding ensures it doesn't touch the very edge of the screen
-            const padding = 20; 
-            
-            // Get the width and height of the visible "frame"
+            // On first touch, change it to absolute so it can fly anywhere
+            btn.style.position = 'absolute';
+
+            // Define the "Frame" (padding of 30px so it stays away from edges)
+            const padding = 40;
             const maxWidth = window.innerWidth - btn.offsetWidth - padding;
             const maxHeight = window.innerHeight - btn.offsetHeight - padding;
 
-            // Generate random coordinates within those bounds
+            // Pick a random spot inside the frame
             const randomX = Math.max(padding, Math.floor(Math.random() * maxWidth));
             const randomY = Math.max(padding, Math.floor(Math.random() * maxHeight));
 
-            // Apply the new position
             btn.style.left = randomX + 'px';
             btn.style.top = randomY + 'px';
         }
@@ -109,13 +113,6 @@
             document.getElementById('quiz').style.display = 'none';
             document.getElementById('message').style.display = 'block';
         }
-
-        // Initialize No button position near the Yes button
-        window.onload = () => {
-            const noBtn = document.getElementById('noBtn');
-            noBtn.style.top = (window.innerHeight / 2 + 60) + "px";
-            noBtn.style.left = (window.innerWidth / 2 - noBtn.offsetWidth / 2) + "px";
-        };
     </script>
 </body>
 </html>
